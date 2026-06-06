@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подснежные — правила сервера Minecraft</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b2f3a 0%, #1a4a5a 50%, #2d6e7a 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Montserrat', sans-serif;
+            color: #e8f0f2;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        /* Снежинки на фоне */
+        body::before {
+            content: "❄️";
+            position: fixed;
+            font-size: 80px;
+            color: rgba(255,255,255,0.05);
+            bottom: 20px;
+            right: 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(15, 35, 45, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Шапка */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 1.5rem;
+        }
+
+        .snowflake-icon {
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #a8e6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .subtitle {
+            color: #b0d4e0;
+            font-size: 1.1rem;
+        }
+
+        .version {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Навигация */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+
+        .nav a {
+            color: #c8e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav a:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* Карточки разделов */
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #6bc4d4;
+            transition: transform 0.2s;
+        }
+
+        .section:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title span {
+            font-size: 1.8rem;
+        }
+
+        .rule-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+        }
+
+        .rule-number {
+            display: inline-block;
+            min-width: 35px;
+            color: #6bc4d4;
+            font-weight: 600;
+        }
+
+        .rule-text {
+            color: #e0f0f5;
+        }
+
+        .subrule {
+            padding-left: 35px;
+            margin-top: 0.3rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+            color: #c0dce5;
+        }
+
+        /* Таблица наказаний */
+        .penalty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .penalty-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .penalty-title {
+            font-weight: 700;
+            color: #f5b042;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .penalty-desc {
+            font-size: 0.85rem;
+            color: #c0dce5;
+        }
+
+        /* Главное правило */
+        .golden-rule {
+            background: linear-gradient(135deg, rgba(245,176,66,0.2), rgba(107,196,212,0.2));
+            border-left: 4px solid #f5b042;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 24px;
+        }
+
+        .golden-rule p {
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+            color: #8cb8c4;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .rule-number {
+                min-width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="snowflake-icon">❄️</div>
+            <h1>Подснежные</h1>
+            <div class="subtitle">ванильный Minecraft-сервер</div>
+            <div class="version">Версия 1.21.11 • Регламент от 06.06.2026</div>
+        </div>
+
+        <div class="nav">
+            <a href="#general">Общий</a>
+            <a href="#tech">Техбезопасность</a>
+            <a href="#mods">Модификации</a>
+            <a href="#build">Строительство</a>
+            <a href="#pvp">PvP</a>
+            <a href="#chat">Чат</a>
+            <a href="#accounts">Аккаунты</a>
+            <a href="#penalties">Наказания</a>
+        </div>
+
+        <!-- 0. ОБЩИЙ РЕГЛАМЕНТ -->
+        <div class="section" id="general">
+            <div class="section-title">
+                <span>📋</span> 0. Общий регламент
+            </div>
+            <div class="rule-item"><span class="rule-number">0.1</span> <span class="rule-text">Правила распространяются на всех игроков сервера «Подснежные» без исключений.</span></div>
+            <div class="rule-item"><span class="rule-number">0.2</span> <span class="rule-text">Администрация может вносить изменения в правила без оповещения игроков.</span></div>
+            <div class="rule-item"><span class="rule-number">0.3</span> <span class="rule-text">Незнание правил не освобождает от ответственности.</span></div>
+            <div class="rule-item"><span class="rule-number">0.4</span> <span class="rule-text">Администрация имеет право не разглашать детали технических проверок (например, как именно был пойман X-Ray).</span></div>
+            <div class="rule-item"><span class="rule-number">0.5</span> <span class="rule-text">Запрещено искать лазейки в правилах, чтобы оправдать свои действия. Если ваше поведение очевидно противоречит духу честной и дружелюбной игры — администрация вправе применить наказание по своему усмотрению.</span></div>
+            <div class="rule-item"><span class="rule-number">0.6</span> <span class="rule-text">Введение администрации в заблуждение (ложные жалобы, подделка доказательств, симуляция нарушений) карается блокировкой.</span></div>
+        </div>
+
+        <!-- I. ТЕХНИЧЕСКАЯ БЕЗОПАСНОСТЬ -->
+        <div class="section" id="tech">
+            <div class="section-title">
+                <span>🛡️</span> I. Техническая безопасность
+            </div>
+            <div class="rule-item"><span class="rule-number">1.1</span> <span class="rule-text">Запрещено создавать проблемы, которые мешают работе сервера (механизмы, постройки, сущности, баги).</span></div>
+            <div class="rule-item"><span class="rule-number">1.2</span> <span class="rule-text">Запрещено атаковать сервер (DDOS).</span></div>
+            <div class="rule-item"><span class="rule-number">1.3</span> <span class="rule-text">Запрещено использовать баги игры: выход за границы мира, дюп ресурсов (кроме ковриков, рельс и ТНТ), получение предметов, недоступных в ванилле.</span></div>
+            <div class="rule-item"><span class="rule-number">1.4</span> <span class="rule-text">Запрещено намеренно нагружать сервер ради забавы или вредительства. Примеры: тысячи падающих блоков, бесконечный цикл редстоуна.</span></div>
+        </div>
+
+        <!-- II. МОДИФИКАЦИИ -->
+        <div class="section" id="mods">
+            <div class="section-title">
+                <span>⚙️</span> II. Модификации и честная игра
+            </div>
+            <div class="rule-item"><span class="rule-number">2.1</span> <span class="rule-text">Запрещено использовать читы, макросы или любое стороннее ПО, дающее преимущество перед другими игроками.</span></div>
+            <div class="subrule">2.1.1 К запрещённым модам относятся (включая аналоги): X-Ray / текстурпаки на просмотр сквозь блоки, автокликеры, Freecam, Ghost-режимы, AutoTotem, AutoArmor, AutoEat, BetterPVP, ESP, SeedCracker.</div>
+            <div class="subrule">2.1.2 Если вы получили бан за читы и вернулись — вы обязаны удалить все запрещённые моды.</div>
+            <div class="rule-item"><span class="rule-number">2.2</span> <span class="rule-text">Запрещено любое дружеское взаимодействие с игроком, который в данный момент использует читы, если вы знаете об этом.</span></div>
+        </div>
+
+        <!-- III. СТРОИТЕЛЬСТВО -->
+        <div class="section" id="build">
+            <div class="section-title">
+                <span>🏠</span> III. Строительство и территория
+            </div>
+            <div class="rule-item"><span class="rule-number">3.1</span> <span class="rule-text">Запрещено разрушать, изменять или занимать чужие постройки без явного разрешения владельца.</span></div>
+            <div class="rule-item"><span class="rule-number">3.2</span> <span class="rule-text">Запрещено: открывать чужие сундуки, шалкеры, печи, редстоун-механизмы; заливать лавой/водой чужие постройки; поджигать, взрывать или намеренно наводить мобов.</span></div>
+            <div class="rule-item"><span class="rule-number">3.3</span> <span class="rule-text">Запрещено строительство: нацистской символики, свастики, чрезмерно лагающих построек, нецензурных и оскорбительных построек.</span></div>
+            <div class="rule-item"><span class="rule-number">3.4</span> <span class="rule-text">Запрещены «гриферские столбы» и порча биома (варварская вырубка лесов, кратеры от ТНТ без застройки).</span></div>
+        </div>
+
+        <!-- IV. PVP -->
+        <div class="section" id="pvp">
+            <div class="section-title">
+                <span>⚔️</span> IV. PvP и взаимодействие с игроками
+            </div>
+            <div class="rule-item"><span class="rule-number">4.1</span> <span class="rule-text">PvP разрешено только: по взаимному согласию или на официальных ивентах, объявленных администрацией.</span></div>
+            <div class="rule-item"><span class="rule-number">4.2</span> <span class="rule-text">Убийство другого игрока без его согласия приравнивается к гриферству.</span></div>
+            <div class="rule-item"><span class="rule-number">4.3</span> <span class="rule-text">Лут умершего игрока не принадлежит вам. Вы обязаны: подобрать вещи, положить в ближайший сундук, написать в чат и договориться о передаче владельцу.</span></div>
+            <div class="rule-item"><span class="rule-number">4.4</span> <span class="rule-text">Запрещено подговаривать, провоцировать или заставлять другого игрока нарушить правила.</span></div>
+        </div>
+
+        <!-- V. ЧАТ -->
+        <div class="section" id="chat">
+            <div class="section-title">
+                <span>💬</span> V. Чат и общение
+            </div>
+            <div class="rule-item"><span class="rule-number">5.1</span> <span class="rule-text">Запрещено: грубое оскорбление игроков, угрозы, разжигание конфликтов.</span></div>
+            <div class="rule-item"><span class="rule-number">5.2</span> <span class="rule-text">Запрещён спам: одинаковые сообщения более трёх раз подряд, повторяющиеся символы или бессмысленный флуд.</span></div>
+            <div class="rule-item"><span class="rule-number">5.3</span> <span class="rule-text">Мат разрешён в лёгкой форме для эмоциональной окраски (но не в адрес других игроков).</span></div>
+            <div class="rule-item"><span class="rule-number">5.4</span> <span class="rule-text">Запрещены любые формы дискриминации.</span></div>
+            <div class="rule-item"><span class="rule-number">5.5</span> <span class="rule-text">Запрещено распространять личные данные других игроков без их согласия.</span></div>
+        </div>
+
+        <!-- VI. АККАУНТЫ -->
+        <div class="section" id="accounts">
+            <div class="section-title">
+                <span>🔐</span> VI. Аккаунты и идентификация
+            </div>
+            <div class="rule-item"><span class="rule-number">6.1</span> <span class="rule-text">Запрещено использовать мультиаккаунты для: обхода бана или мута, нарушения экономики, буста себя или друзей.</span></div>
+            <div class="rule-item"><span class="rule-number">6.2</span> <span class="rule-text">Запрещено выдавать себя за другого игрока или представителя администрации.</span></div>
+        </div>
+
+        <!-- VII. НАКАЗАНИЯ -->
+        <div class="section" id="penalties">
+            <div class="section-title">
+                <span>⚖️</span> VII. Наказания
+            </div>
+            <div class="penalty-grid">
+                <div class="penalty-card">
+                    <div class="penalty-title">📌 Мелкие нарушения</div>
+                    <div class="penalty-desc">Спам, лёгкий мат в адрес игрока, незначительный гриф → предупреждение или мут до 24 ч</div>
+                </div>
+                <div class="penalty-card">
+                    <div class="penalty-title">⚠️ Средние нарушения</div>
+                    <div class="penalty-desc">Крупный гриф, кража, оскорбления, дюп, провокации → бан от 3 до 14 дней</div>
+                </div>
+                <div class="penalty-card">
+                    <div class="penalty-title">🔥 Тяжёлые нарушения</div>
+                    <div class="penalty-desc">X-Ray, читы, макросы, лаг-машины → бан от 7 дней до перманента</div>
+                </div>
+                <div class="penalty-card">
+                    <div class="penalty-title">💀 Особо тяжёлые</div>
+                    <div class="penalty-desc">Свастика, нацизм, ДДОС, обход блокировки → перманентный бан + блок IP</div>
+                </div>
+            </div>
+            <div class="rule-item" style="margin-top: 1rem;"><span class="rule-number">7.5</span> <span class="rule-text">Все баны дольше 7 дней можно обжаловать в Discord.</span></div>
+            <div class="rule-item"><span class="rule-number">7.6</span> <span class="rule-text">Администрация может смягчить или ужесточить наказание по своему усмотрению.</span></div>
+        </div>
+
+        <!-- Золотое правило -->
+        <div class="golden-rule">
+            <p>❄️ <strong>Главное правило «Подснежных»:</strong><br>
+            Относись к другим так, как хочешь, чтобы относились к тебе.</p>
+        </div>
+
+        <div class="footer">
+            <p>❄️ Сервер «Подснежные» — место для дружной и честной игры ❄️</p>
+            <p>Актуальная версия правил всегда доступна по этой ссылке</p>
+        </div>
+    </div>
+</body>
+</html>
